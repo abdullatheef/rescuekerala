@@ -94,7 +94,7 @@
 		var error = function(err) {
 			console.warn(`ERROR(${err.code}): ${err.message}`);
 		}
-    $('#modal_ok_button').click(function(event) {
+    $('#instructionModal').on('hidden.bs.modal', function () {
       navigator.geolocation.getCurrentPosition(success, error, options);
     });
 		$('#instructionModal').modal('show');
