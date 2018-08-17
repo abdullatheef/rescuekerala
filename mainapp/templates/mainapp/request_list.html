@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
-
+{% load custom_tags %}
 {% block css %}
 <style>
 @media only screen and (max-width: 800px)  {
@@ -30,7 +30,9 @@
 			position: relative;
 			padding-left: 50%;
 		}
-
+    .full_width_td {
+      padding-left: 4% !important;
+    }
 		#requests-table td:before {
 			/* Now like a table header */
 			position: absolute;
@@ -72,6 +74,7 @@
         <th>Phone - ഫോണ്‍ നമ്പര്‍</th>
         <th>Date - തീയതി</th>
         <th>More details - കൂടുതൽ വിശദാംശങ്ങൾ</th>
+        <th>Audio - ശബ്ദം</th>
       </tr>
     </thead>
     <tbody>
@@ -83,6 +86,15 @@
           <td><a href="tel:{{ req.requestee_phone }}" >{{ req.requestee_phone }}</a></td>
           <td>{{ req.dateadded }}</td>
           <td><a class="btn btn-sm btn-success" href="{%url 'requestdetailsview' req.id %}" target="_blank">More details</a>
+          {% check_audio_path req.id as audio_path %}
+          {% if audio_path %}
+          <td class="full_width_td">
+              <audio controls>
+                  <source src="/media/audio_{{ req.id }}.wav" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+          </td>  
+          {% endif %}
         </tr>
     {% endfor %}
   </tbody>

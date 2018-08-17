@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 
 urlpatterns = [
@@ -24,3 +26,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view()),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

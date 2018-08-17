@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.base import TemplateView
@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import Http404
+import os
 
 class CreateRequest(CreateView):
     model = Request
@@ -48,7 +49,16 @@ class CreateRequest(CreateView):
         'needothers'
     ]
     success_url = '/req_sucess/'
-
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.save()
+        import base64
+        if not os.path.exists(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+        with open(os.path.join(settings.MEDIA_ROOT, "audio_%d.wav" %obj.id) , "wb") as fh:
+            s = self.request.POST['audioWav'].replace('data:;base64,', '')
+            fh.write(base64.b64decode(s))
+        return HttpResponseRedirect(self.success_url)
 
 class RegisterVolunteer(CreateView):
     model = Volunteer
