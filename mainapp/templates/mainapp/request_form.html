@@ -155,81 +155,13 @@
           .attr('value', audioToSend)
           .appendTo('#requestForm');
       return true;
-  });
-// Audio recording
-var audioToSend;
-const recordAudio = () =>
-  new Promise(async resolve => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    let audioChunks = [];
-
-    mediaRecorder.addEventListener("dataavailable", event => {
-      audioChunks.push(event.data);
-    });
-
-    const start = () => {
-			audioChunks = []
-			mediaRecorder.start()
-		};
-
-    const stop = () =>
-      new Promise(resolve => {
-        mediaRecorder.addEventListener("stop", () => {
-          audioBlob = new Blob(audioChunks);
-          const audioUrl = URL.createObjectURL(audioBlob);
-					$('#recordedAudio').attr("src", audioUrl)
-					var reader = new FileReader();
-					reader.readAsDataURL(audioBlob); 
-					reader.onloadend = function() {
-						audioToSend  = reader.result;                
-					}
-        });
-        mediaRecorder.stop();
-      });
-
-    resolve({ start, stop });
-  });
-const recorder = recordAudio();
-class AudioRecord {
-	getTextElem(elem) {
-		return this.getContent(elem).filter(function() {
-				return this.nodeType == 3;
-		})
+	});
+	var aR;
+	function toggleRecording(e) {
+		aR = new AudioRecord();
+		aR.toggleRecording(e);
 	}
-	getContent(obj) {
-		return $(obj).first().contents()
-	}
-	getTrimText(obj) {
-		return this.getTextElem(obj).text().trim()
-	}
-	toggleRecording(elem) {
-		if (this.getTrimText(elem) == 'Record'){
-			this.getTextElem(elem)[
-				this.getContent(elem).length-2].nodeValue = this.getTextElem(elem).text().replace("Record", "Stop");
-			elem.style.background = '#f1595991';
-			$('#recordedAudio').hide();
-			recorder.then(function(obj){obj.start()});
-		} else{
-			this.getTextElem(elem)[
-				this.getContent(elem).length-2].nodeValue = this.getTextElem(elem).text().replace("Stop", "Record");
-			elem.style.background = '#fff';
-			$('#recordedAudio').show();
-			recorder.then(function(obj){
-				(async () => {
-				const audio = await obj.stop();
-				})()
-			});
-		}
-	}
-}
-const aR = new AudioRecord();
-function toggleRecording( e ) {
-		aR.toggleRecording(e)
-}
-
-
-  </script>
+	</script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdPKYd4vwgQY-OmF0Vn22wJu0EcDyi1MQ&libraries=places&callback=initMap"
         async defer></script>
  <script src="{% static 'js/placepicker.js' %}"
